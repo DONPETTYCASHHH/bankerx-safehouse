@@ -4,7 +4,7 @@ Reputation intelligence for South African residential estates. Combines Google M
 
 ---
 
-## Stack
+## Stack 
 
 - **Frontend** — React (Next.js)
 - **Data** — DataForSEO Business Data API (Google Reviews)
