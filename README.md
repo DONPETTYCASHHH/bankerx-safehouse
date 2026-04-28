@@ -100,4 +100,4 @@ Using async task endpoints (`task_post` + `task_get`) instead of live endpoints 
 
 ## Disclaimer
 
-Educational analytics only. Not property, legal, or financial advice.
+Educational analytics only. Not property, legal, or financial advice 
