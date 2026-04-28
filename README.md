@@ -1,7 +1,7 @@
 # BankerX ERI — Estate Risk Index Dashboard
 
 Reputation intelligence for South African residential estates. Combines Google Maps reviews, sentiment analysis, and operational risk scoring into a single dashboard for homebuyers and investors.
-
+ 
 ---
 
 ## Stack 
