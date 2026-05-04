@@ -17,6 +17,59 @@ const loadingSteps = [
   "Building SAFEHOUSE dashboard…",
 ];
 
+// Popular SA estates for instant local suggestions
+const SA_ESTATES = [
+  { place_id: null, name: "Waterfall Estate", address: "Waterfall, Midrand, Gauteng", type: "Gated estate" },
+  { place_id: null, name: "Waterfall Country Village", address: "Waterfall, Midrand, Gauteng", type: "Sectional title" },
+  { place_id: null, name: "Waterfall Hills Lifestyle Village", address: "Waterfall, Midrand, Gauteng", type: "Lifestyle village" },
+  { place_id: null, name: "Dainfern Golf Estate", address: "Dainfern, Sandton, Gauteng", type: "Golf estate" },
+  { place_id: null, name: "Dainfern Valley Estate", address: "Dainfern, Johannesburg, Gauteng", type: "Gated estate" },
+  { place_id: null, name: "Steyn City", address: "Lanseria, Johannesburg, Gauteng", type: "Lifestyle estate" },
+  { place_id: null, name: "Kyalami Estate", address: "Kyalami, Midrand, Gauteng", type: "Gated estate" },
+  { place_id: null, name: "Kyalami Hills Estate", address: "Kyalami, Midrand, Gauteng", type: "Gated estate" },
+  { place_id: null, name: "Mooikloof Estate", address: "Mooikloof, Pretoria, Gauteng", type: "Gated estate" },
+  { place_id: null, name: "Thatchfield Estate", address: "Centurion, Gauteng", type: "Gated estate" },
+  { place_id: null, name: "Midstream Estate", address: "Midstream, Centurion, Gauteng", type: "Lifestyle estate" },
+  { place_id: null, name: "Pecanwood Estate", address: "Hartbeespoort, North West", type: "Golf estate" },
+  { place_id: null, name: "Brooklands Lifestyle Estate", address: "Centurion, Gauteng", type: "Lifestyle estate" },
+  { place_id: null, name: "Eagle Canyon Golf Estate", address: "Roodepoort, Johannesburg, Gauteng", type: "Golf estate" },
+  { place_id: null, name: "Meyersdal Eco Estate", address: "Alberton, Johannesburg, Gauteng", type: "Eco estate" },
+  { place_id: null, name: "Simbithi Eco Estate", address: "Ballito, KwaZulu-Natal", type: "Eco estate" },
+  { place_id: null, name: "Zimbali Coastal Resort & Estate", address: "Ballito, KwaZulu-Natal", type: "Coastal estate" },
+  { place_id: null, name: "Izinga Estate", address: "Umhlanga, KwaZulu-Natal", type: "Gated estate" },
+  { place_id: null, name: "Mount Edgecombe Estate", address: "Mount Edgecombe, KwaZulu-Natal", type: "Golf estate" },
+  { place_id: null, name: "Umthunzi Estate", address: "Ballito, KwaZulu-Natal", type: "Gated estate" },
+  { place_id: null, name: "Val de Vie Estate", address: "Paarl, Western Cape", type: "Wine & lifestyle estate" },
+  { place_id: null, name: "Fynbos Estate", address: "Somerset West, Western Cape", type: "Gated estate" },
+  { place_id: null, name: "Sitari Country Estate", address: "Somerset West, Western Cape", type: "Country estate" },
+  { place_id: null, name: "Atlantic Beach Estate", address: "Melkbosstrand, Western Cape", type: "Golf estate" },
+  { place_id: null, name: "Paardevlei Estate", address: "Somerset West, Western Cape", type: "Gated estate" },
+  { place_id: null, name: "Serengeti Lifestyle Estate", address: "Kempton Park, Ekurhuleni, Gauteng", type: "Lifestyle estate" },
+  { place_id: null, name: "The Blyde Riverwalk Estate", address: "Pretoria East, Gauteng", type: "Lifestyle estate" },
+  { place_id: null, name: "Carlswald North Lifestyle Estate", address: "Midrand, Gauteng", type: "Lifestyle estate" },
+  { place_id: null, name: "Blue Valley Golf Estate", address: "Centurion, Gauteng", type: "Golf estate" },
+  { place_id: null, name: "Copperhill Estate", address: "Johannesburg North, Gauteng", type: "Gated estate" },
+  { place_id: null, name: "Cedar Creek Estate", address: "Johannesburg, Gauteng", type: "Gated estate" },
+  { place_id: null, name: "The Huntsman Estate", address: "Fourways, Johannesburg, Gauteng", type: "Gated estate" },
+  { place_id: null, name: "Riverclub Estate", address: "Sandton, Gauteng", type: "Gated estate" },
+  { place_id: null, name: "Munyaka Waterfall", address: "Waterfall, Midrand, Gauteng", type: "Lifestyle estate" },
+  { place_id: null, name: "The Fitzgerald", address: "Johannesburg, Gauteng", type: "Sectional title" },
+  { place_id: null, name: "Greenkloof Estate", address: "Pretoria, Gauteng", type: "Gated estate" },
+  { place_id: null, name: "Lion Pride Lifestyle Estate", address: "Lanseria, Gauteng", type: "Lifestyle estate" },
+  { place_id: null, name: "Leloko Lifestyle Estate", address: "Hartbeespoort, North West", type: "Lifestyle estate" },
+  { place_id: null, name: "Thornhill Estate", address: "Midrand, Gauteng", type: "Gated estate" },
+  { place_id: null, name: "Stoneridge Estate", address: "Edenvale, Ekurhuleni, Gauteng", type: "Gated estate" },
+];
+
+function localSearch(q) {
+  const lower = q.toLowerCase();
+  return SA_ESTATES.filter(e =>
+    e.name.toLowerCase().includes(lower) ||
+    e.address.toLowerCase().includes(lower) ||
+    e.type.toLowerCase().includes(lower)
+  ).slice(0, 6);
+}
+
 async function searchEstates(query) {
   const res = await fetch(`/api/estate-search?q=${encodeURIComponent(query)}`);
   const json = await res.json();
@@ -65,13 +118,28 @@ function EstateSearch({ onSelect, disabled }) {
     const val = e.target.value;
     setQuery(val); setActiveIdx(-1);
     if (val.trim().length < 3) { setResults([]); setOpen(false); return; }
+
+    // 1. Show local results instantly
+    const local = localSearch(val.trim());
+    if (local.length > 0) { setResults(local); setOpen(true); }
+
+    // 2. Fire API after 600ms debounce — merges in live results
     clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(async () => {
       setSearching(true);
-      try { const r = await searchEstates(val.trim()); setResults(r); setOpen(true); }
-      catch { setResults([]); }
+      try {
+        const api = await searchEstates(val.trim());
+        if (api.length > 0) {
+          // Merge: API results first, then any local results not already covered
+          const apiNames = new Set(api.map(r => r.name.toLowerCase()));
+          const extras = local.filter(r => !apiNames.has(r.name.toLowerCase()));
+          setResults([...api, ...extras].slice(0, 8));
+        }
+        setOpen(true);
+      }
+      catch { /* keep local results showing */ }
       finally { setSearching(false); }
-    }, 500);
+    }, 600);
   }
 
   function pick(r) { setQuery(r.name); setOpen(false); setResults([]); onSelect(r); }
