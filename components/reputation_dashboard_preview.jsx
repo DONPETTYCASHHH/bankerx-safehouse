@@ -321,9 +321,9 @@ export default function App() {
         h1 { font-size: clamp(32px,5vw,62px); line-height: .92; letter-spacing: -0.065em; margin: 18px 0 16px; color: #fff; }
         h2 { margin: 0; font-size: 22px; letter-spacing: -.035em; color: #f0f4ff; }
         .hero-copy { color: rgba(255,255,255,.72); font-size: 15px; line-height: 1.65; max-width: 720px; margin: 0; }
-        .search-panel { background: rgba(0,0,0,.22); border: 1px solid rgba(255,255,255,.12); border-radius: 26px; padding: 16px; }
+        .search-panel { background: rgba(0,0,0,.22); border: 1px solid rgba(255,255,255,.12); border-radius: 26px; padding: 16px; position: relative; z-index: 9999; }
         .search-title { font-size: 14px; font-weight: 700; margin-bottom: 12px; color: rgba(255,255,255,.9); }
-        .search-wrap { position: relative; margin-bottom: 10px; }
+        .search-wrap { position: relative; margin-bottom: 10px; z-index: 9999; }
         .search-field { position: relative; }
         .search-field input { width: 100%; background: rgba(255,255,255,.08); color: #fff; border: 1px solid rgba(255,255,255,.15); border-radius: 17px; padding: 15px 16px 15px 40px; font-size: 14px; outline: none; transition: .2s ease; }
         .search-field input:focus { border-color: rgba(147,197,253,.6); box-shadow: 0 0 0 4px rgba(96,165,250,.13); background: rgba(255,255,255,.1); }
@@ -331,7 +331,7 @@ export default function App() {
         .search-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); pointer-events: none; }
         .search-spinner { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.2); border-top-color: #93c5fd; border-radius: 50%; animation: spin .6s linear infinite; }
         .clear-x { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,.15); border: none; color: #fff; width: 20px; height: 20px; border-radius: 99px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .dropdown { position: absolute; top: calc(100% + 6px); left: 0; right: 0; background: #111827; border: 1px solid rgba(255,255,255,.15); border-radius: 18px; overflow: hidden; z-index: 50; box-shadow: 0 20px 60px rgba(0,0,0,.6); }
+        .dropdown { position: absolute; top: calc(100% + 6px); left: 0; right: 0; background: #111827; border: 1px solid rgba(255,255,255,.15); border-radius: 18px; overflow: hidden; z-index: 9999; box-shadow: 0 20px 60px rgba(0,0,0,.6); }
         .drop-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,.06); transition: background .1s; }
         .drop-item:last-child { border-bottom: none; }
         .drop-item:hover, .drop-item.active { background: rgba(255,255,255,.08); }
