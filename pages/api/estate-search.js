@@ -7,11 +7,18 @@ const SEARCH_LIMIT = 20;
 
 function isGibberish(q) {
   if (q.length < 5) return true;
-  if (!/[aeiou]/i.test(q)) return true;          // no vowels
-  if (/^\d+$/.test(q)) return true;              // all numbers
-  if (/^[^a-zA-Z]*$/.test(q)) return true;       // no letters at all
-  if (/^(.)\1{3,}$/.test(q)) return true;        // repeated chars "aaaaa"
-  if (/test/i.test(q)) return true;              // contains "test"
+  if (!/[aeiou]/i.test(q)) return true;                    // no vowels
+  if (/^\d+$/.test(q)) return true;                        // all numbers
+  if (/^[^a-zA-Z]*$/.test(q)) return true;                 // no letters at all
+  if (/^(.)\1{3,}$/.test(q)) return true;                  // repeated chars "aaaaa"
+  if (/test/i.test(q)) return true;                        // contains "test"
+  if (/^estate\d+$/i.test(q)) return true;                 // estate1, estate50 etc
+  if (/\.\.([\/\\])/i.test(q)) return true;            // path traversal ../
+  if (/<[^>]*>/i.test(q)) return true;                     // HTML/script tags
+  if (/('|")\s*(or|and)\s+\d+\s*=\s*\d+/i.test(q)) return true;  // SQL injection
+  if (/(union\s+select|drop\s+table|insert\s+into)/i.test(q)) return true; // SQL keywords
+  if (/javascript:/i.test(q)) return true;                 // javascript: protocol
+  if (/etc\/passwd/i.test(q)) return true;                // passwd probe
   return false;
 }
 
