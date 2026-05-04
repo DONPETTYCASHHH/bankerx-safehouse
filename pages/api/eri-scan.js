@@ -39,9 +39,8 @@ function recencyWeight(timestamp) {
 
 async function fetchReviews(placeId, complexName, location) {
   const auth = getAuth();
-  // Live endpoint — returns immediately, no polling needed, fits Cloudflare 30s limit
-  const res = await fetch(
-    'https://api.dataforseo.com/v3/business_data/google/reviews/live/advanced',
+  const taskRes = await fetch(
+    'https://api.dataforseo.com/v3/business_data/google/reviews/task_post',
     {
       method: 'POST',
       headers: { 'Authorization': `Basic ${auth}`, 'Content-Type': 'application/json' },
@@ -55,11 +54,21 @@ async function fetchReviews(placeId, complexName, location) {
     }
   );
 
-  const data = await res.json();
-  const result = data.tasks?.[0]?.result?.[0];
-  const items = result?.items;
-  if (!items) throw new Error('No reviews found for this estate.');
-  return { items, taskResult: result };
+  const taskData = await taskRes.json();
+  const taskId = taskData.tasks?.[0]?.id;
+  if (!taskId) throw new Error('No task ID returned');
+
+  for (let i = 0; i < 6; i++) {
+    await new Promise(r => setTimeout(r, 5000));
+    const resultRes = await fetch(
+      `https://api.dataforseo.com/v3/business_data/google/reviews/task_get/${taskId}`,
+      { headers: { 'Authorization': `Basic ${auth}` } }
+    );
+    const resultData = await resultRes.json();
+    const items = resultData.tasks?.[0]?.result?.[0]?.items;
+    if (items) return { items, taskResult: resultData.tasks?.[0]?.result?.[0] };
+  }
+  throw new Error('Review fetch timed out. Try again in a moment.');
 }
 
 function buildDashboard(complexName, taskResult) {
