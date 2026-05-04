@@ -58,7 +58,7 @@ async function fetchReviews(placeId, complexName, location) {
   const taskId = taskData.tasks?.[0]?.id;
   if (!taskId) throw new Error('No task ID returned');
 
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 18; i++) {
     await new Promise(r => setTimeout(r, 5000));
     const resultRes = await fetch(
       `https://api.dataforseo.com/v3/business_data/google/reviews/task_get/${taskId}`,
@@ -68,7 +68,7 @@ async function fetchReviews(placeId, complexName, location) {
     const items = resultData.tasks?.[0]?.result?.[0]?.items;
     if (items) return { items, taskResult: resultData.tasks?.[0]?.result?.[0] };
   }
-  throw new Error('Review fetch timed out. Try again in a moment.');
+  throw new Error('Review fetch timed out. Please try again.');
 }
 
 function buildDashboard(complexName, taskResult) {
